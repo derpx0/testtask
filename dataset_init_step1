@@ -1,0 +1,39 @@
+CREATE OR REPLACE VIEW generator_16
+AS SELECT 0 n UNION ALL SELECT 1  UNION ALL SELECT 2  UNION ALL 
+   SELECT 3   UNION ALL SELECT 4  UNION ALL SELECT 5  UNION ALL
+   SELECT 6   UNION ALL SELECT 7  UNION ALL SELECT 8  UNION ALL
+   SELECT 9   UNION ALL SELECT 10 UNION ALL SELECT 11 UNION ALL
+   SELECT 12  UNION ALL SELECT 13 UNION ALL SELECT 14 UNION ALL 
+   SELECT 15;
+
+CREATE OR REPLACE VIEW generator_256
+AS SELECT ( hi.n * 16 + lo.n ) AS n
+     FROM generator_16 lo
+        , generator_16 hi;
+
+CREATE TEMPORARY TABLE TmpTable
+(id INT NOT NULL AUTO_INCREMENT,
+user_id INT NOT NULL,
+loc VARCHAR(300) NOT NULL,
+tstamp DATETIME NOT NULL,
+PRIMARY KEY(id));
+
+LOAD DATA INFILE '/home/derpson/test_task/test-photo.csv'
+INTO TABLE TmpTable
+FIELDS TERMINATED BY ';'
+    ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 LINES
+(user_id, loc, tstamp);
+
+INSERT INTO picview_user (id, userName)
+SELECT DISTINCT user_id, CONCAT('user', user_id)
+FROM TmpTable;
+
+INSERT INTO picview_picture (owner_id, location, `timestamp`)
+SELECT user_id, loc, tstamp
+FROM TmpTable;
+
+INSERT INTO picview_picturetag (title)
+SELECT CONCAT('tag', n) FROM generator_256
+WHERE n < 100;

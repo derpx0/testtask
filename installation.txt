@@ -1,0 +1,15 @@
+db - MySQL
+Django 1.8.2 (mysqlclient 1.3.6)
+Типичный django проект. Внести в settings.py свои реквизиты для соединения с базой данных.
+Выполнить manage.py migrate
+Выполнить в клиенте MySQL dataset_init_step1, предварительно отредактировав строчку LOAD DATA INFILE '/path/to/test-photo.csv'
+Запустить (на django debug web сервере) проект (manage.py runserver)
+Для завершения создания тестового датасета, при установленной в settings.py DEVELOPMENT=True открыть в браузере
+<app_location>/picview/dev_filllikes, <app_location>/picview/dev_filltags
+
+Пример запроса:
+http://127.0.0.1:8000/picview/?page=0&tag=tag2&tag=tag8&etag=tag5&etag=tag70&etag=tag41&order=1
+page - номер страницы
+tag - символьные имена тэгов
+etag - символьные имена исключающих тэгов
+order - 0/1/2  без сортировки/сортировать по времени/сортировать по лайкам
